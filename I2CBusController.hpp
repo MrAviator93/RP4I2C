@@ -51,7 +51,7 @@ public:
 		return m_i2cBusName;
 	}
 
-    /**
+	/**
      * @brief TBW
      * 
      * @param slaveAddr 
@@ -62,7 +62,7 @@ public:
      */
 	bool read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t& result );
 
-    /**
+	/**
      * @brief TBW
      * 
      * @param slaveAddr 
@@ -73,7 +73,7 @@ public:
      */
 	std::int16_t read( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* data, std::uint16_t size );
 
-    /**
+	/**
      * @brief TBW
      * 
      * @param slaveAddr 
@@ -84,7 +84,7 @@ public:
      */
 	bool write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t data );
 
-    /**
+	/**
      * @brief TBW
      * 
      * @param slaveAddr 
