@@ -7,6 +7,12 @@
 namespace RPI
 {
 
+enum PinMode
+{
+	OUTPUT = 0,
+	INPUT = 1
+};
+
 enum Port : std::uint8_t
 {
 	PORT_A = 0x14,
