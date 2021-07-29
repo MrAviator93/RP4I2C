@@ -25,10 +25,6 @@ enum Pins : std::uint8_t
 	PIN_8 = 0x80
 };
 
-/**
- * @class CMCP23017Controller
- * @brief This class needs to be completed
- */
 class CMCP23017Controller
 {
 public:
@@ -54,7 +50,28 @@ explicit CMCP23017Controller( CI2CBusController& busController, std::uint8_t por
 	configure();
 }
 
-void setOn( Pins pin, Ports port )
+void serPortConfig( Ports port, config )
+{
+	if ( port == Ports::PORT_A )
+	{
+		if ( m_portAConfiguration != config )
+		{
+			m_portAConfiguration = config;
+			configure();	
+		}
+	}
+	
+	if ( port == Ports::PORT_B )
+	{
+		if ( m_portBConfiguration != config )
+		{
+			m_portBConfiguration = config;
+			configure();
+		}
+	}	
+}
+
+void setOnA( Pins pin )
 {
 	// TBW
 	// We will also need to perform a check if a pin is
@@ -62,7 +79,7 @@ void setOn( Pins pin, Ports port )
 }
 
 template< typename ... Args >
-void setOn( Pins first, Ports port, Args ... args )
+void setOnA( Pins first, Args ... args )
 {
 	// TBW
 }
