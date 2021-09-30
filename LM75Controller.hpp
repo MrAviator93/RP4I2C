@@ -1,7 +1,7 @@
 /***********************************************************************
 FILE LM75CONTROLLER.HPP CONTAINTS LM75 CONTROLLER CLASS IMPLEMENTATION
 
-FILE UTMOST REVIEW DONE ON (21.07.2021) BY ARTUR K. 
+FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K. 
 ***********************************************************************/
 
 #ifndef RPI_LM75_CONTROLLER_HPP__
@@ -19,8 +19,8 @@ namespace RPI
 /**
  * @class CLM75Controller
  * @brief Implements class that is able to communicate
- * with LM75 IC via I2C means. Currently only read ambient
- * temperature method is implemented.
+ * with LM75 IC via I2C means. 
+ * Allows to retrieve an ambient temperature measurement.
  * 
  * @author AK aka MrAviator93
  */
@@ -37,11 +37,8 @@ public:
 		, m_lm75Address { address }
 	{ }
 
-	/**
-     * @brief Retrieves the temperature in degrees Celsius
-     * @return float 
-     */
-	float getTemperature()
+	/// Retrieves the temperature in degrees Celsius
+	float getTemperatureC()
 	{
 		std::array< std::uint8_t, 2 > data { 0, 0 };
 
@@ -57,10 +54,16 @@ public:
 		return 0.0f;
 	}
 
+	/// Retrieves the temperature in Fahrenheit
+	float getTemperatureF()
+	{
+		return getTemperatureC() * 1.8f + 32.0f;
+	}
+
 private:
 	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
 
-	std::uint8_t m_lm75Address { 0 }; //!< Address of an LM75 IC on the I2C bus.
+	std::uint8_t m_lm75Address { 0x48 }; //!< Address of an LM75 IC on the I2C bus.
 	inline static const std::uint8_t m_lm75_temp_read_reg { 0x00 }; //!< Temperature read register on LM75
 };
 

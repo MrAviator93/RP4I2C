@@ -1,16 +1,16 @@
 /***********************************************************************
 FILE I2CBUSCONTROLLER.HPP CONTAINTS I2C BUS CONTROLLER CLASS IMPLEMENTATION
 
-FILE UTMOST REVIEW DONE ON (21.07.2021) BY ARTUR K. 
+FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K. 
 ***********************************************************************/
 
 #ifndef RPI_I2C_BUS_CONTROLLER_HPP__
 #define RPI_I2C_BUS_CONTROLLER_HPP__
 
 // C++
-#include <cstdint>
-#include <string>
 #include <mutex>
+#include <string>
+#include <cstdint>
 
 namespace RPI
 {
@@ -28,7 +28,7 @@ namespace RPI
 class CI2CBusController
 {
 public:
-	/// Default Ctor opens a file descriptor.
+	/// Default ctor opens a file descriptor.
 	explicit CI2CBusController( const std::string& busName );
 
 	/// Default dtor, closes file m_fd file.

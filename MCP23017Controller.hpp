@@ -1,3 +1,8 @@
+/***********************************************************************
+FILE LM75CONTROLLER.HPP CONTAINTS MCP23017 CONTROLLER CLASS IMPLEMENTATION
+
+FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K. 
+***********************************************************************/
 
 #ifndef RPI_MCP23017_CONTROLLER_HPP__
 #define RPI_MCP23017_CONTROLLER_HPP__

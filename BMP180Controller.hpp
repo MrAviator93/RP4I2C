@@ -1,3 +1,8 @@
+/***********************************************************************
+FILE LM75CONTROLLER.HPP CONTAINTS BMP180 CONTROLLER CLASS IMPLEMENTATION
+
+FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K. 
+***********************************************************************/
 
 #ifndef RPI_BMP180_CONTROLLER_HPP__
 #define RPI_BMP180_CONTROLLER_HPP__
@@ -34,7 +39,6 @@ public:
 
 private:
 	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
-
 	const SamplingAccuracy m_samplingAccuracy;
 
 private:

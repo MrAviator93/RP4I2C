@@ -9,7 +9,7 @@ int main( int, char** )
 
     RPI::CI2CBusController bc{ "/dev/i2c-1" };
     RPI::CLM75Controller lc{ bc, 0x48 };
-    std::cout << "Ambient temperature: " << lc.getTemperature() << std::endl;
+    std::cout << "Ambient temperature: " << lc.getTemperatureC() << std::endl;
 
     return 0;
 }
