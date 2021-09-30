@@ -11,7 +11,7 @@ all: main
 main:
 	clear
 	@echo "Compiling main.cpp ... "
-	$(CC) $(CFLAGS) $(CLIBS) I2CBusController.cpp main.cpp -o main.out
+	$(CC) $(CFLAGS) $(CLIBS) I2CBusController.cpp main.cpp MCP23017Controller.cpp BMP180Controller.cpp -o main.out
 
 clean:
 	rm -rf main
