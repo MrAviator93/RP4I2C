@@ -1,5 +1,8 @@
+
+// I2c
 #include "I2CBusController.hpp"
 
+// 3rd Party
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <string.h>
@@ -10,6 +13,7 @@ extern "C" {
 #include <linux/i2c.h>
 }
 
+// C++
 #include <vector>
 #include <sstream>
 #include <iostream>
@@ -17,14 +21,15 @@ extern "C" {
 namespace RPI
 {
 CI2CBusController::CI2CBusController( const std::string& busName )
-	: m_i2cBusName( busName )
+	: m_i2cBusName { busName }
 {
-	m_fd = open( m_i2cBusName.c_str(), O_RDWR | O_NONBLOCK );
+	m_fd = ::open( m_i2cBusName.c_str(), O_RDWR | O_NONBLOCK );
 	if( m_fd < 0 )
 	{
 		reportError();
 		return;
 	}
+
 	checkFunc();
 }
 
@@ -35,7 +40,7 @@ CI2CBusController::~CI2CBusController()
 
 bool CI2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t& result )
 {
-	std::unique_lock l( m_fdMtx );
+	std::unique_lock l { m_fdMtx };
 
 	std::uint8_t outbuf[ 1 ];
 	std::uint8_t inbuf[ 1 ];
@@ -59,7 +64,7 @@ bool CI2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::ui
 
 	inbuf[ 0 ] = 0;
 
-	if( ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
 	{
 		reportError();
 		return false;
@@ -73,7 +78,7 @@ bool CI2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::ui
 std::int16_t
 CI2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* data, std::uint16_t size )
 {
-	std::unique_lock l( m_fdMtx );
+	std::unique_lock l { m_fdMtx };
 
 	std::uint8_t outbuf[ 2 ];
 	outbuf[ 0 ] = reg;
@@ -95,7 +100,7 @@ CI2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t
 
 	memset( data, 0x00, size );
 
-	if( ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
 	{
 		reportError();
 		return -1;
@@ -106,7 +111,7 @@ CI2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t
 
 bool CI2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t data )
 {
-	std::unique_lock l( m_fdMtx );
+	std::unique_lock l { m_fdMtx };
 
 	std::uint8_t outbuf[ 2 ];
 	outbuf[ 0 ] = reg;
@@ -122,7 +127,7 @@ bool CI2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::u
 	msgset[ 0 ].nmsgs = 1;
 	msgset[ 0 ].msgs = msgs;
 
-	if( ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
 	{
 		reportError();
 		return false;
@@ -133,7 +138,7 @@ bool CI2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::u
 
 bool CI2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size )
 {
-	std::unique_lock l( m_fdMtx );
+	std::unique_lock l { m_fdMtx };
 
 	std::vector< std::uint8_t > data_buffer;
 	data_buffer.resize( size + 1 ); // + 1 for register
@@ -166,11 +171,11 @@ bool CI2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::u
 
 void CI2CBusController::reportError()
 {
-	auto last_errno = errno;
-	std::vector< char > foo( 256, 0 );
+	auto e = errno;
+	auto err { std::vector< char >( 256, 0 ) };
 
-	std::unique_lock l( m_lastErrMtx );
-	m_lastError = strerror_r( last_errno, foo.data(), foo.size() );
+	std::unique_lock l { m_lastErrMtx };
+	m_lastError = strerror_r( e, err.data(), err.size() );
 }
 
 bool check( std::uint32_t fs, std::uint32_t f, char const* what )
@@ -187,15 +192,14 @@ bool check( std::uint32_t fs, std::uint32_t f, char const* what )
 
 void CI2CBusController::checkFunc()
 {
-	std::uint32_t funcs;
+	std::uint32_t funcs {};
 
-	if( ioctl( m_fd, I2C_FUNCS, &funcs ) < 0 )
+	if( ::ioctl( m_fd, I2C_FUNCS, &funcs ) < 0 )
 	{
 		return reportError();
 	}
 
-	std::cerr << "Funcs are: " << std::hex << funcs << std::endl;
-
+	std::cerr << "Supported funcions are: " << std::hex << funcs << std::endl;
 	check( funcs, I2C_FUNC_I2C, "I2C_FUNC_I2C" );
 	check( funcs, I2C_FUNC_10BIT_ADDR, "I2C_FUNC_10BIT_ADDR" );
 	check( funcs, I2C_FUNC_PROTOCOL_MANGLING, "I2C_FUNC_PROTOCOL_MANGLING" );

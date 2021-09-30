@@ -34,7 +34,7 @@ public:
 	/// Default dtor, closes file m_fd file.
 	~CI2CBusController();
 
-	/// Returns the os name of the physical bus name
+	/// Returns the OS name of the physical bus name
 	auto& bus() const
 	{
 		return m_i2cBusName;
@@ -85,19 +85,13 @@ public:
      */
 	bool write( std::uint8_t slaveAddr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size );
 
-	/**
-     * @brief Retrieves error buffer and
-     * outputs it into the looger using make_error method.
-     */
+	/// Retrieves error buffer and outputs it into the looger using make_error method.
 	void reportError();
 
-	/**
-     * @brief An accessor to the last error
-     * @return std::string const&
-     */
+	/// An accessor to the last error
 	std::string lastError() const
 	{
-		std::unique_lock l( m_lastErrMtx );
+		std::unique_lock l { m_lastErrMtx };
 		return m_lastError;
 	}
 

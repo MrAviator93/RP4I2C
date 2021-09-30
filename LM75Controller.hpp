@@ -33,9 +33,9 @@ public:
      * @param address the address of an LM75 IC on the I2C bus.
      */
 	explicit CLM75Controller( CI2CBusController& busController, std::uint8_t address = 0x48 ) noexcept( true )
-		: m_busController {busController}
-		, m_lm75Address {address}
-	{}
+		: m_busController { busController }
+		, m_lm75Address { address }
+	{ }
 
 	/**
      * @brief Retrieves the temperature in degrees Celsius
@@ -43,7 +43,7 @@ public:
      */
 	float getTemperature()
 	{
-		std::array< std::uint8_t, 2 > data {0, 0};
+		std::array< std::uint8_t, 2 > data { 0, 0 };
 
 		auto size = m_busController.read( m_lm75Address, m_lm75_temp_read_reg, data.data(), data.size() );
 		if( size > 0 )
@@ -60,8 +60,8 @@ public:
 private:
 	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
 
-	std::uint8_t m_lm75Address {0}; //!< Address of an LM75 IC on the I2C bus.
-	inline static const std::uint8_t m_lm75_temp_read_reg {0x00}; //!< Temperature read register on LM75
+	std::uint8_t m_lm75Address { 0 }; //!< Address of an LM75 IC on the I2C bus.
+	inline static const std::uint8_t m_lm75_temp_read_reg { 0x00 }; //!< Temperature read register on LM75
 };
 
 } // namespace RPI
