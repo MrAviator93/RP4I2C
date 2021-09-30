@@ -7,8 +7,10 @@ FILE UTMOST REVIEW DONE ON (21.07.2021) BY ARTUR K.
 #ifndef RPI_LM75_CONTROLLER_HPP__
 #define RPI_LM75_CONTROLLER_HPP__
 
+// I2C
 #include "I2CBusController.hpp"
 
+// C++
 #include <array>
 
 namespace RPI
