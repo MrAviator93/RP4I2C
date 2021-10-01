@@ -9,12 +9,20 @@ FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K.
 
 #include "I2CBusController.hpp"
 
+#include <iostream>
+
 namespace RPI
 {
 
 /**
  * @class CMCP23017Controller
  * @brief TBW
+ * 
+ * @note MCP23017 output pin configuration:
+ * 1. If pins are set as output after chip restart (power off - on)
+ * the pins will be all on 0x00. To set them all of use i2cset -y 1 0x20 0x14 0xff
+ * 
+ * 
  * 
  * @author AK aka MrAviator93
  */
@@ -50,21 +58,21 @@ public:
 
 	/// Default ctor, all pins are configured as output by default
 	explicit CMCP23017Controller( CI2CBusController& busController, std::uint8_t address = 0x20 ) noexcept( true )
-		: m_busController { busController }
-		, m_icAddress { address }
+		: m_busController {busController}
+		, m_icAddress {address}
 	{
 		configure();
 	}
 
 	/// The secondary ctor, which enables the individual port configuration
 	explicit CMCP23017Controller( CI2CBusController& busController,
-								  std::uint8_t portAConfig = 0,
-								  std::uint8_t portBConfig = 0,
+								  std::uint8_t portAConfig,
+								  std::uint8_t portBConfig,
 								  std::uint8_t address = 0x20 ) noexcept( true )
-		: m_busController { busController }
-		, m_icAddress { address }
-		, m_portAConfiguration { portAConfig }
-		, m_portBConfiguration { portBConfig }
+		: m_busController {busController}
+		, m_icAddress {address}
+		, m_portAConfiguration {portAConfig}
+		, m_portBConfiguration {portBConfig}
 	{
 		configure();
 	}
@@ -90,19 +98,56 @@ public:
 		}
 	}
 
-	// Set's on port a pin ...
+	// Set's pin on on port A
 	void setOnPortA( Pins pin )
 	{
-		// TBW
-		// We will also need to perform a check if a pin is
-		// set as output pin !
+		// Check if the pin is configured to be an output
+		if( ( m_portAConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
+		{
+			m_portAPinStates &= ~static_cast< std::uint8_t >( pin );
+			m_busController.write( m_icAddress, 0x14, m_portAPinStates );
+		}
 	}
 
 	// TBW ...
 	template < typename... Args >
-	void setOnPortA( Pins first, Args... args )
+	void setOnPortA( Pins pin, Args... pins )
 	{
-		// TBW
+		const std::uint8_t pinValue =
+			( static_cast< std::uint8_t >( pin ) | ... | static_cast< std::uint8_t >( pins ) );
+
+		// Check if desired pins are configured as output
+		if( ( m_portAConfiguration & pinValue ) == 0 )
+		{
+			m_portAPinStates &= ~pinValue;
+			m_busController.write( m_icAddress, 0x14, m_portAPinStates );
+		}
+	}
+
+	/// TBW
+	void setOffPortA( Pins pin )
+	{
+		// Check if pin is configured to be an output
+		if( ( m_portAConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
+		{
+			m_portAPinStates |= static_cast< std::uint8_t >( pin );
+			m_busController.write( m_icAddress, 0x14, m_portAPinStates );
+		}
+	}
+
+	// TBW ...
+	template < typename... Args >
+	void setOffPortA( Pins pin, Args... pins )
+	{
+		const std::uint8_t pinValue =
+			( static_cast< std::uint8_t >( pin ) | ... | static_cast< std::uint8_t >( pins ) );
+
+		// Check if desired pins are configured as output
+		if( ( m_portAConfiguration & pinValue ) == 0 )
+		{
+			m_portAPinStates |= pinValue;
+			m_busController.write( m_icAddress, 0x14, m_portAPinStates );
+		}
 	}
 
 private:
@@ -111,17 +156,28 @@ private:
 	{
 		m_busController.write( m_icAddress, m_IODDIRARegister, m_portAConfiguration );
 		m_busController.write( m_icAddress, m_IODDIRBRegister, m_portBConfiguration );
+		retrieve();
+	}
+
+	/// TBW
+	void retrieve()
+	{
+		m_busController.read( m_icAddress, 0x12, m_portAPinStates );
+		m_busController.read( m_icAddress, 0x13, m_portBPinStates );
 	}
 
 private:
 	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
-	std::uint8_t m_icAddress { 0x20 }; //!< Address of an MCP23017 IC on the I2C bus.
+	std::uint8_t m_icAddress {0x20}; //!< Address of an MCP23017 IC on the I2C bus.
 	std::uint8_t m_portAConfiguration {}; //!< Bits identify if pins are set to output ( 0 ) or input ( 1 ) for port A
 	std::uint8_t m_portBConfiguration {}; //!< Bits identify if pins are set to output ( 0 ) or input ( 1 ) for port B
 
+	std::uint8_t m_portAPinStates {}; //!< TBW
+	std::uint8_t m_portBPinStates {}; //!< TBW
+
 private:
-	inline const static std::uint8_t m_IODDIRARegister { 0x00 }; //!< MCP23017 IODIRA register from datasheet
-	inline const static std::uint8_t m_IODDIRBRegister { 0x01 }; //!< MCP23017 IODIRB register from datasheet
+	inline const static std::uint8_t m_IODDIRARegister {0x00}; //!< MCP23017 IODIRA register from datasheet
+	inline const static std::uint8_t m_IODDIRBRegister {0x01}; //!< MCP23017 IODIRB register from datasheet
 };
 
 } // namespace RPI
