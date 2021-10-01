@@ -31,142 +31,162 @@ CI2CBusController::CI2CBusController( const std::string& busName )
 	}
 
 	checkFunc();
+
+	m_open = true;
 }
 
 CI2CBusController::~CI2CBusController()
 {
 	close( m_fd );
+	m_open = false;
 }
 
 bool CI2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t& result )
 {
-	std::unique_lock l { m_fdMtx };
-
-	std::uint8_t outbuf[ 1 ];
-	std::uint8_t inbuf[ 1 ];
-
-	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slave_addr;
-	msgs[ 0 ].flags = 0;
-	msgs[ 0 ].len = 1;
-	msgs[ 0 ].buf = &outbuf[ 0 ];
-
-	msgs[ 1 ].addr = slave_addr;
-	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
-	msgs[ 1 ].len = 1;
-	msgs[ 1 ].buf = inbuf;
-
-	i2c_rdwr_ioctl_data msgset[ 1 ];
-	msgset[ 0 ].msgs = msgs;
-	msgset[ 0 ].nmsgs = 2;
-
-	outbuf[ 0 ] = reg;
-
-	inbuf[ 0 ] = 0;
-
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( isOpen() )
 	{
-		reportError();
-		return false;
+		std::unique_lock l { m_fdMtx };
+
+		std::uint8_t outbuf[ 1 ];
+		std::uint8_t inbuf[ 1 ];
+
+		i2c_msg msgs[ 2 ];
+		msgs[ 0 ].addr = slave_addr;
+		msgs[ 0 ].flags = 0;
+		msgs[ 0 ].len = 1;
+		msgs[ 0 ].buf = &outbuf[ 0 ];
+
+		msgs[ 1 ].addr = slave_addr;
+		msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
+		msgs[ 1 ].len = 1;
+		msgs[ 1 ].buf = inbuf;
+
+		i2c_rdwr_ioctl_data msgset[ 1 ];
+		msgset[ 0 ].msgs = msgs;
+		msgset[ 0 ].nmsgs = 2;
+
+		outbuf[ 0 ] = reg;
+
+		inbuf[ 0 ] = 0;
+
+		if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+		{
+			reportError();
+			return false;
+		}
+
+		result = inbuf[ 0 ];
+
+		return true;
 	}
-
-	result = inbuf[ 0 ];
-
-	return true;
+	return false;
 }
 
 std::int16_t
 CI2CBusController::read( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* data, std::uint16_t size )
 {
-	std::unique_lock l { m_fdMtx };
-
-	std::uint8_t outbuf[ 2 ];
-	outbuf[ 0 ] = reg;
-
-	i2c_msg msgs[ 2 ];
-	msgs[ 0 ].addr = slave_addr;
-	msgs[ 0 ].flags = 0;
-	msgs[ 0 ].len = 1;
-	msgs[ 0 ].buf = outbuf;
-
-	msgs[ 1 ].addr = slave_addr;
-	msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
-	msgs[ 1 ].len = size;
-	msgs[ 1 ].buf = data;
-
-	i2c_rdwr_ioctl_data msgset[ 1 ];
-	msgset[ 0 ].msgs = msgs;
-	msgset[ 0 ].nmsgs = 2;
-
-	memset( data, 0x00, size );
-
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( isOpen() )
 	{
-		reportError();
-		return -1;
+		std::unique_lock l { m_fdMtx };
+
+		std::uint8_t outbuf[ 2 ];
+		outbuf[ 0 ] = reg;
+
+		i2c_msg msgs[ 2 ];
+		msgs[ 0 ].addr = slave_addr;
+		msgs[ 0 ].flags = 0;
+		msgs[ 0 ].len = 1;
+		msgs[ 0 ].buf = outbuf;
+
+		msgs[ 1 ].addr = slave_addr;
+		msgs[ 1 ].flags = I2C_M_RD | I2C_M_NOSTART;
+		msgs[ 1 ].len = size;
+		msgs[ 1 ].buf = data;
+
+		i2c_rdwr_ioctl_data msgset[ 1 ];
+		msgset[ 0 ].msgs = msgs;
+		msgset[ 0 ].nmsgs = 2;
+
+		memset( data, 0x00, size );
+
+		if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+		{
+			reportError();
+			return -1;
+		}
+
+		return size;
 	}
 
-	return size;
+	return {};
 }
 
 bool CI2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t data )
 {
-	std::unique_lock l { m_fdMtx };
-
-	std::uint8_t outbuf[ 2 ];
-	outbuf[ 0 ] = reg;
-	outbuf[ 1 ] = data;
-
-	i2c_msg msgs[ 1 ];
-	msgs[ 0 ].addr = slave_addr;
-	msgs[ 0 ].flags = 0;
-	msgs[ 0 ].len = 2;
-	msgs[ 0 ].buf = outbuf;
-
-	i2c_rdwr_ioctl_data msgset[ 1 ];
-	msgset[ 0 ].nmsgs = 1;
-	msgset[ 0 ].msgs = msgs;
-
-	if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+	if( isOpen() )
 	{
-		reportError();
-		return false;
-	}
+		std::unique_lock l { m_fdMtx };
 
-	return true;
+		std::uint8_t outbuf[ 2 ];
+		outbuf[ 0 ] = reg;
+		outbuf[ 1 ] = data;
+
+		i2c_msg msgs[ 1 ];
+		msgs[ 0 ].addr = slave_addr;
+		msgs[ 0 ].flags = 0;
+		msgs[ 0 ].len = 2;
+		msgs[ 0 ].buf = outbuf;
+
+		i2c_rdwr_ioctl_data msgset[ 1 ];
+		msgset[ 0 ].nmsgs = 1;
+		msgset[ 0 ].msgs = msgs;
+
+		if( ::ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+		{
+			reportError();
+			return false;
+		}
+
+		return true;
+	}
+	return false;
 }
 
 bool CI2CBusController::write( std::uint8_t slave_addr, std::uint8_t reg, std::uint8_t* data, std::uint8_t size )
 {
-	std::unique_lock l { m_fdMtx };
-
-	std::vector< std::uint8_t > data_buffer;
-	data_buffer.resize( size + 1 ); // + 1 for register
-
-	// Fill the data buffer
-	data_buffer[ 0 ] = reg;
-	for( int i = 1; i < size + 1; i++ )
+	if( isOpen() )
 	{
-		data_buffer[ i ] = data[ i - 1 ];
+		std::unique_lock l { m_fdMtx };
+
+		std::vector< std::uint8_t > data_buffer;
+		data_buffer.resize( size + 1 ); // + 1 for register
+
+		// Fill the data buffer
+		data_buffer[ 0 ] = reg;
+		for( int i = 1; i < size + 1; i++ )
+		{
+			data_buffer[ i ] = data[ i - 1 ];
+		}
+
+		i2c_msg msgs[ 1 ];
+		msgs[ 0 ].addr = slave_addr;
+		msgs[ 0 ].flags = 0;
+		msgs[ 0 ].len = data_buffer.size();
+		msgs[ 0 ].buf = data_buffer.data();
+
+		i2c_rdwr_ioctl_data msgset[ 1 ];
+		msgset[ 0 ].nmsgs = 1;
+		msgset[ 0 ].msgs = msgs;
+
+		if( ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
+		{
+			reportError();
+			return false;
+		}
+
+		return true;
 	}
-
-	i2c_msg msgs[ 1 ];
-	msgs[ 0 ].addr = slave_addr;
-	msgs[ 0 ].flags = 0;
-	msgs[ 0 ].len = data_buffer.size();
-	msgs[ 0 ].buf = data_buffer.data();
-
-	i2c_rdwr_ioctl_data msgset[ 1 ];
-	msgset[ 0 ].nmsgs = 1;
-	msgset[ 0 ].msgs = msgs;
-
-	if( ioctl( m_fd, I2C_RDWR, &msgset ) < 0 )
-	{
-		reportError();
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
 void CI2CBusController::reportError()

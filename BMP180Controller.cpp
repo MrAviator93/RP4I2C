@@ -37,7 +37,7 @@ float CBMP180Controller::getAltitude()
 
 	std::this_thread::sleep_for( 4500us );
 
-	std::array< std::uint8_t, 2 > rawUT {};
+	std::array< std::uint8_t, 2 > rawUT { 0, 0 };
 	m_busController.read( m_bmp180Address, 0xF6, rawUT.data(), rawUT.size() ); // Read raw temperature measurement
 	std::int16_t UT = ( ( int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
 
@@ -49,7 +49,7 @@ float CBMP180Controller::getAltitude()
 	std::this_thread::sleep_for( std::chrono::milliseconds( static_cast< int >( ( 5.0f + 8.0f * OSS ) ) ) );
 
 	// Read reg 0xF6 (MSB), 0xF7 (LSB), 0xF8(XLSB)
-	std::array< std::uint8_t, 3 > upRawData {};
+	std::array< std::uint8_t, 3 > upRawData { 0, 0, 0 };
 	m_busController.read(
 		m_bmp180Address, 0xF6, rawUT.data(), rawUT.size() ); // Read raw pressure measurement of 19 bits
 
