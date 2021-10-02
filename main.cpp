@@ -1,5 +1,6 @@
 #include "MCP23017Controller.hpp"
 #include "I2CBusController.hpp"
+#include "BMP180Controller.hpp"
 #include "LM75Controller.hpp"
 
 #include <iostream>
@@ -18,9 +19,13 @@ int main( int, char** )
 					RPI::CMCP23017Controller::Pins::PIN_7,
 					RPI::CMCP23017Controller::Pins::PIN_6 );
 
-    mcp.setOffPortA( RPI::CMCP23017Controller::Pins::PIN_8 );
+	mcp.setOffPortA( RPI::CMCP23017Controller::Pins::PIN_8 );
 
-	std::cout << "Ambient temperature: " << lc.getTemperatureC() << std::endl;
+	RPI::CBMP180Controller bmp {bc, RPI::CBMP180Controller::SamplingAccuracy::ULTRA_HIGH_RESOLUTION };
+
+	std::cerr << "True temp: " << bmp.getTrueTemperatureC() << " C" << std::endl;
+	std::cerr << "True pressure: " << bmp.getTruePressurePa() << " Pa" << std::endl;
+	std::cerr << "Absolute altitude: " << bmp.getAbsoluteAltitude() << " m" << std::endl;
 
 	return 0;
 }

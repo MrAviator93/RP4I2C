@@ -33,21 +33,39 @@ public:
 
 	explicit CBMP180Controller( CI2CBusController& busController,
 								SamplingAccuracy sAccuracy = SamplingAccuracy::STANDARD )
-		: m_busController { busController }
-		, m_samplingAccuracy { sAccuracy }
+		: m_busController {busController}
+		, m_samplingAccuracy {sAccuracy}
 	{
-		getCalibrationConsts();
+		readCalibrationConsts();
 	}
 
-	float getAltitude();
+	float getTrueTemperatureC();
+
+	float getTruePressurePa();
+
+	/// Calculates the absolute altitude using international barometric formula
+	float getAbsoluteAltitude();
 
 private:
 	/// Retrieves the calibration data constatns
-	void getCalibrationConsts();
+	void readCalibrationConsts();
 
 private:
 	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
 	const SamplingAccuracy m_samplingAccuracy;
+
+	// Calibration constants
+	std::int16_t m_ac1 {};
+	std::int16_t m_ac2 {};
+	std::int16_t m_ac3 {};
+	std::uint16_t m_ac4 {};
+	std::uint16_t m_ac5 {};
+	std::uint16_t m_ac6 {};
+	std::int16_t m_b1 {};
+	std::int16_t m_b2 {};
+	std::int16_t m_mb {};
+	std::int16_t m_mc {};
+	std::int16_t m_md {};
 
 private:
 	// Calibration constants - every sensor module has individual coefficients
@@ -64,14 +82,13 @@ private:
 	// MC 0xBC 0xBD short
 	// MD 0xBE 0xBF short
 
-	const static std::uint8_t m_bmp180Address {
-		0xEE }; //!< Address of an BMP180 IC on the I2C bus, unchangable, singular
-	const static std::uint8_t m_bmp180WhoIam { 0xD0 }; //!< Who I am, should return 0x55
-	const static std::uint8_t m_bmp180Reset { 0xE0 }; //!<
-	const static std::uint8_t m_bmp180Control { 0xF4 }; //!<
-	const static std::uint8_t m_bmp180OutMsb { 0xF6 }; //!<
-	const static std::uint8_t m_bmp180OutLsb { 0xF7 }; //!<
-	const static std::uint8_t m_bmp180OutXlsb { 0xF8 }; //!<
+	const static std::uint8_t m_bmp180Address {0x77}; //!< Address of an BMP180 IC on the I2C bus, unchangable, singular
+	const static std::uint8_t m_bmp180WhoIam {0xD0}; //!< Who I am, should return 0x55
+	const static std::uint8_t m_bmp180Reset {0xE0}; //!<
+	const static std::uint8_t m_bmp180Control {0xF4}; //!<
+	const static std::uint8_t m_bmp180OutMsb {0xF6}; //!<
+	const static std::uint8_t m_bmp180OutLsb {0xF7}; //!<
+	const static std::uint8_t m_bmp180OutXlsb {0xF8}; //!<
 };
 
 } // namespace RPI
