@@ -64,7 +64,7 @@ private:
 	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
 
 	std::uint8_t m_lm75Address { 0x48 }; //!< Address of an LM75 IC on the I2C bus.
-	inline static const std::uint8_t m_lm75_temp_read_reg { 0x00 }; //!< Temperature read register on LM75
+	inline static constexpr std::uint8_t m_lm75_temp_read_reg { 0x00 }; //!< Temperature read register on LM75
 };
 
 } // namespace I2C

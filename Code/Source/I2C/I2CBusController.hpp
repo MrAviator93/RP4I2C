@@ -41,10 +41,10 @@ public:
 		return m_i2cBusName;
 	}
 
-     bool isOpen() const
-     {
-          return m_open;
-     }
+	bool isOpen() const
+	{
+		return m_open;
+	}
 
 	/**
      * @brief TBW
@@ -107,7 +107,7 @@ private:
 
 private:
 	const std::string m_i2cBusName; //!< I2C Bus name, i.e. "/dev/i2c-1"
-     std::atomic_bool m_open{ false }; //!< Indicates whether the I2C bus is open
+	std::atomic_bool m_open { false }; //!< Indicates whether the I2C bus is open
 
 	mutable std::mutex m_fdMtx; //!< Locks the read write operations
 	int m_fd { -1 }; //!< TBW

@@ -60,8 +60,8 @@ public:
 
 	/// Default ctor, all pins are configured as output by default
 	explicit CMCP23017Controller( CI2CBusController& busController, std::uint8_t address = 0x20 ) noexcept( true )
-		: m_busController {busController}
-		, m_icAddress {address}
+		: m_busController { busController }
+		, m_icAddress { address }
 	{
 		configure();
 	}
@@ -71,10 +71,10 @@ public:
 								  std::uint8_t portAConfig,
 								  std::uint8_t portBConfig,
 								  std::uint8_t address = 0x20 ) noexcept( true )
-		: m_busController {busController}
-		, m_icAddress {address}
-		, m_portAConfiguration {portAConfig}
-		, m_portBConfiguration {portBConfig}
+		: m_busController { busController }
+		, m_icAddress { address }
+		, m_portAConfiguration { portAConfig }
+		, m_portBConfiguration { portBConfig }
 	{
 		configure();
 	}
@@ -170,7 +170,7 @@ private:
 
 private:
 	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
-	std::uint8_t m_icAddress {0x20}; //!< Address of an MCP23017 IC on the I2C bus.
+	std::uint8_t m_icAddress { 0x20 }; //!< Address of an MCP23017 IC on the I2C bus.
 	std::uint8_t m_portAConfiguration {}; //!< Bits identify if pins are set to output ( 0 ) or input ( 1 ) for port A
 	std::uint8_t m_portBConfiguration {}; //!< Bits identify if pins are set to output ( 0 ) or input ( 1 ) for port B
 
@@ -178,8 +178,8 @@ private:
 	std::uint8_t m_portBPinStates {}; //!< TBW
 
 private:
-	inline const static std::uint8_t m_IODDIRARegister {0x00}; //!< MCP23017 IODIRA register from datasheet
-	inline const static std::uint8_t m_IODDIRBRegister {0x01}; //!< MCP23017 IODIRB register from datasheet
+	inline static constexpr std::uint8_t m_IODDIRARegister { 0x00 }; //!< MCP23017 IODIRA register from datasheet
+	inline static constexpr std::uint8_t m_IODDIRBRegister { 0x01 }; //!< MCP23017 IODIRB register from datasheet
 };
 
 } // namespace I2C

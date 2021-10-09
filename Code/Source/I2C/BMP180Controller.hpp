@@ -33,8 +33,8 @@ public:
 
 	explicit CBMP180Controller( CI2CBusController& busController,
 								SamplingAccuracy sAccuracy = SamplingAccuracy::STANDARD )
-		: m_busController {busController}
-		, m_samplingAccuracy {sAccuracy}
+		: m_busController { busController }
+		, m_samplingAccuracy { sAccuracy }
 	{
 		readCalibrationConsts();
 	}
@@ -68,13 +68,14 @@ private:
 	std::int16_t m_md {};
 
 private:
-	const static std::uint8_t m_bmp180Address {0x77}; //!< Address of an BMP180 IC on the I2C bus, unchangable, singular
-	const static std::uint8_t m_bmp180WhoIam {0xD0}; //!< Who I am, should return 0x55
-	const static std::uint8_t m_bmp180Reset {0xE0}; //!<
-	const static std::uint8_t m_bmp180Control {0xF4}; //!<
-	const static std::uint8_t m_bmp180OutMsb {0xF6}; //!<
-	const static std::uint8_t m_bmp180OutLsb {0xF7}; //!<
-	const static std::uint8_t m_bmp180OutXlsb {0xF8}; //!<
+	static constexpr std::uint8_t m_bmp180Address {
+		0x77 }; //!< Address of an BMP180 IC on the I2C bus, unchangable, singular
+	static constexpr std::uint8_t m_bmp180WhoIam { 0xD0 }; //!< Who I am, should return 0x55
+	static constexpr std::uint8_t m_bmp180Reset { 0xE0 }; //!<
+	static constexpr std::uint8_t m_bmp180Control { 0xF4 }; //!<
+	static constexpr std::uint8_t m_bmp180OutMsb { 0xF6 }; //!<
+	static constexpr std::uint8_t m_bmp180OutLsb { 0xF7 }; //!<
+	static constexpr std::uint8_t m_bmp180OutXlsb { 0xF8 }; //!<
 };
 
 } // namespace I2C

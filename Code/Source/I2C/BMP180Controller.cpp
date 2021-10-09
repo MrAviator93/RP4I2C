@@ -52,7 +52,7 @@ float CBMP180Controller::getTrueTemperatureC()
 	m_busController.write( m_bmp180Address, 0xF4, 0x2E ); // Start temperature measurement
 	std::this_thread::sleep_for( 4500us );
 
-	std::array< std::uint8_t, 2 > rawUT {0, 0};
+	std::array< std::uint8_t, 2 > rawUT { 0, 0 };
 	m_busController.read( m_bmp180Address, 0xF6, rawUT.data(), rawUT.size() ); // Read raw temperature measurement
 	std::int16_t UT = ( ( int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
 
@@ -67,8 +67,6 @@ float CBMP180Controller::getTrueTemperatureC()
 
 float CBMP180Controller::getTruePressurePa()
 {
-	std::cerr << __PRETTY_FUNCTION__ << std::endl;
-
 	// Pressure resolution
 	const std::uint8_t OSS = static_cast< std::uint8_t >( m_samplingAccuracy );
 
@@ -77,7 +75,7 @@ float CBMP180Controller::getTruePressurePa()
 	std::this_thread::sleep_for( 4500us );
 
 	// Read raw temperature measurement
-	std::array< std::uint8_t, 2 > rawUT {0, 0};
+	std::array< std::uint8_t, 2 > rawUT { 0, 0 };
 	m_busController.read( m_bmp180Address, 0xF6, rawUT.data(), rawUT.size() );
 	std::int16_t UT = ( ( std::int16_t( rawUT[ 0 ] ) << 8 ) | rawUT[ 1 ] );
 
@@ -88,7 +86,7 @@ float CBMP180Controller::getTruePressurePa()
 	std::this_thread::sleep_for( std::chrono::milliseconds( static_cast< int >( ( 5.0f + 8.0f * OSS ) ) ) );
 
 	// UP = ( MSB << 16 + LSB << 8 + XLSB ) >> ( 8 - oss );
-	std::array< std::uint8_t, 3 > upRawData {0, 0, 0};
+	std::array< std::uint8_t, 3 > upRawData { 0, 0, 0 };
 	m_busController.read( m_bmp180Address, 0xF6, upRawData.data(), upRawData.size() ); // Read raw ...
 	std::int64_t UP = ( ( static_cast< std::int64_t >( upRawData[ 0 ] ) << 16 ) |
 						( static_cast< std::int64_t >( upRawData[ 1 ] ) << 8 ) | upRawData[ 2 ] ) >>
