@@ -7,11 +7,13 @@ FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K.
 #ifndef RPI_MCP23017_CONTROLLER_HPP__
 #define RPI_MCP23017_CONTROLLER_HPP__
 
+// I2C
 #include "I2CBusController.hpp"
 
+// C++
 #include <iostream>
 
-namespace RPI
+namespace I2C
 {
 
 /**
@@ -180,5 +182,5 @@ private:
 	inline const static std::uint8_t m_IODDIRBRegister {0x01}; //!< MCP23017 IODIRB register from datasheet
 };
 
-} // namespace RPI
+} // namespace I2C
 #endif // RPI_MCP23017_CONTROLLER_HPP__

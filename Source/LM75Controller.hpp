@@ -4,8 +4,8 @@ FILE LM75CONTROLLER.HPP CONTAINTS LM75 CONTROLLER CLASS IMPLEMENTATION
 FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K. 
 ***********************************************************************/
 
-#ifndef RPI_LM75_CONTROLLER_HPP__
-#define RPI_LM75_CONTROLLER_HPP__
+#ifndef I2C_LM75_CONTROLLER_HPP__
+#define I2C_LM75_CONTROLLER_HPP__
 
 // I2C
 #include "I2CBusController.hpp"
@@ -13,7 +13,7 @@ FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K.
 // C++
 #include <array>
 
-namespace RPI
+namespace I2C
 {
 
 /**
@@ -67,5 +67,5 @@ private:
 	inline static const std::uint8_t m_lm75_temp_read_reg { 0x00 }; //!< Temperature read register on LM75
 };
 
-} // namespace RPI
-#endif // RPI_LM75_CONTROLLER_HPP__
+} // namespace I2C
+#endif // I2C_LM75_CONTROLLER_HPP__

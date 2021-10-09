@@ -18,7 +18,7 @@ extern "C" {
 #include <sstream>
 #include <iostream>
 
-namespace RPI
+namespace I2C
 {
 CI2CBusController::CI2CBusController( const std::string& busName )
 	: m_i2cBusName { busName }
@@ -246,4 +246,4 @@ static_assert( std::is_same< __u8, std::uint8_t >::value, "__u8 definition diffe
 static_assert( std::is_same< unsigned int, std::uint32_t >::value,
 			   "unsigned int definition differs from std::uint32_t definition." );
 
-} // namespace RPI
+} // namespace I2C

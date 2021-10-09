@@ -4,8 +4,8 @@ FILE I2CBUSCONTROLLER.HPP CONTAINTS I2C BUS CONTROLLER CLASS IMPLEMENTATION
 FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K. 
 ***********************************************************************/
 
-#ifndef RPI_I2C_BUS_CONTROLLER_HPP__
-#define RPI_I2C_BUS_CONTROLLER_HPP__
+#ifndef I2C_I2C_BUS_CONTROLLER_HPP__
+#define I2C_I2C_BUS_CONTROLLER_HPP__
 
 // C++
 #include <mutex>
@@ -13,7 +13,7 @@ FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K.
 #include <string>
 #include <cstdint>
 
-namespace RPI
+namespace I2C
 {
 
 /**
@@ -116,5 +116,5 @@ private:
 	std::string m_lastError; //<! TBW
 };
 
-} // namespace RPI
-#endif // RPI_I2C_BUS_CONTROLLER_HPP__
+} // namespace I2C
+#endif // I2C_I2C_BUS_CONTROLLER_HPP__

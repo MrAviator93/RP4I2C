@@ -12,7 +12,7 @@
 
 using namespace std::chrono_literals;
 
-namespace RPI
+namespace I2C
 {
 
 namespace
@@ -162,4 +162,4 @@ float CBMP180Controller::getAbsoluteAltitude()
 	return 44330.0f * r;
 }
 
-} // namespace RPI
+} // namespace I2C
