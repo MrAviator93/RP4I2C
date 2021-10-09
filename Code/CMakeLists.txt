@@ -11,7 +11,7 @@ set( CMAKE_CXX_STANDARD_REQUIRED TRUE )
 add_subdirectory( Source )
 
 if ( I2C_INCLUDE_UNIT_TESTS )
-    add_subdirectory( Test)
+    add_subdirectory( Test )
 endif()
 
 if ( I2C_CORE_GENERATE_DOC )
@@ -28,6 +28,6 @@ if ( I2C_CORE_GENERATE_DOC )
                         COMMENT "Generating API documentation with Doxygen"
                         VERBATIM )
         else ()
-                message("Doxygen has not been found on the current system. Install it in order to generate the documentation.")
+                message( "Doxygen has not been found on the current system. Install it in order to generate the documentation." )
         endif ()
 endif()
