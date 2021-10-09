@@ -1,8 +1,11 @@
+
+// I2C
 #include "MCP23017Controller.hpp"
 #include "I2CBusController.hpp"
 #include "BMP180Controller.hpp"
 #include "LM75Controller.hpp"
 
+// C++
 #include <iostream>
 
 int main( int, char** )
