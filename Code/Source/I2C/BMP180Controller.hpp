@@ -22,7 +22,7 @@ namespace I2C
 class CBMP180Controller
 {
 public:
-	//  can be selected by the variable oversampling_setting
+	// Can be selected by the variable oversampling_setting
 	enum class SamplingAccuracy : std::uint8_t
 	{
 		ULTRA_LOW_POWER = 0,

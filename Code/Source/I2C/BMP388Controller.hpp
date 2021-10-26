@@ -17,6 +17,15 @@ namespace I2C
 class CBMP388Controller
 {
 public:
+	// Can be selected by the variable oversampling_setting
+	enum class SamplingAccuracy : std::uint8_t
+	{
+		ULTRA_LOW_POWER = 0,
+		STANDARD_RESOLUTION = 1,
+		HIGH_RESOLUTION = 2,
+		ULTRA_HIGH_RESOLUTION = 3
+	};
+
 	explicit CBMP388Controller( CI2CBusController& busController )
 		: m_busController { busController }
 	{ }
