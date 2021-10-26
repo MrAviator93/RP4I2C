@@ -20,6 +20,21 @@ extern "C" {
 
 namespace I2C
 {
+namespace
+{
+	bool check( std::uint32_t fs, std::uint32_t f, char const* what )
+	{
+		if( fs & f )
+		{
+			std::ostringstream oss;
+			oss << what << " SUPPORTED" << std::endl;
+			return true;
+		}
+
+		return false;
+	}
+} // namespace
+	
 CI2CBusController::CI2CBusController( const std::string& busName )
 	: m_i2cBusName { busName }
 {
@@ -198,18 +213,6 @@ void CI2CBusController::reportError()
 	m_lastError = strerror_r( e, err.data(), err.size() );
 }
 
-bool check( std::uint32_t fs, std::uint32_t f, char const* what )
-{
-	if( fs & f )
-	{
-		std::ostringstream oss;
-		oss << what << " SUPPORTED" << std::endl;
-		return true;
-	}
-
-	return false;
-}
-
 void CI2CBusController::checkFunc()
 {
 	std::uint32_t funcs {};
@@ -242,6 +245,10 @@ void CI2CBusController::checkFunc()
 	check( funcs, I2C_FUNC_SMBUS_HOST_NOTIFY, "I2C_FUNC_SMBUS_HOST_NOTIFY" );
 }
 
+// TODO Use the following:
+// static_assert( std::is_same_v< __u8, std::uint8_8, "__u8 definition differs from std::uint8_t definition." );
+// static_assert( std::is_same_v< unsigned int, std::uint32_t >, "unsigned int definition differs from std::uint32_t definition." );
+	
 static_assert( std::is_same< __u8, std::uint8_t >::value, "__u8 definition differs from std::uint8_t definition." );
 static_assert( std::is_same< unsigned int, std::uint32_t >::value,
 			   "unsigned int definition differs from std::uint32_t definition." );
