@@ -65,6 +65,26 @@ void CMCP23017Controller::setOffPortA( Pins pin )
 	}
 }
 
+void CMCP23017Controller::setOnPortB( Pins pin )
+{
+	// Check if the pin is configured to be an output
+	if( ( m_portBConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
+	{
+		m_portBPinStates &= ~static_cast< std::uint8_t >( pin );
+		m_busController.write( m_icAddress, 0x15, m_portBPinStates );
+	}
+}
+
+void CMCP23017Controller::setOffPortB( Pins pin )
+{
+	// Check if the pin is configured to be an output
+	if( ( m_portBConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
+	{
+		m_portBPinStates &= ~static_cast< std::uint8_t >( pin );
+		m_busController.write( m_icAddress, 0x15, m_portBPinStates );
+	}
+}
+
 void CMCP23017Controller::configure()
 {
 	m_busController.write( m_icAddress, m_IODDIRARegister, m_portAConfiguration );

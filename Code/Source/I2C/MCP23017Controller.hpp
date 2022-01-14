@@ -104,6 +104,42 @@ public:
 		}
 	}
 
+	// Set's pin on on port B
+	void setOnPortB( Pins pin );
+
+	// TBW ...
+	template < typename... Args >
+	void setOnPortB( Pins pin, Args... pins )
+	{
+		const std::uint8_t pinValue =
+			( static_cast< std::uint8_t >( pin ) | ... | static_cast< std::uint8_t >( pins ) );
+
+		// Check if desired pins are configured as output
+		if( ( m_portBConfiguration & pinValue ) == 0 )
+		{
+			m_portBPinStates &= ~pinValue;
+			write( 0x15, m_portBPinStates );
+		}
+	}
+
+	/// TBW
+	void setOffPortB( Pins pin );
+
+	// TBW ...
+	template < typename... Args >
+	void setOffPortB( Pins pin, Args... pins )
+	{
+		const std::uint8_t pinValue =
+			( static_cast< std::uint8_t >( pin ) | ... | static_cast< std::uint8_t >( pins ) );
+
+		// Check if desired pins are configured as output
+		if( ( m_portBConfiguration & pinValue ) == 0 )
+		{
+			m_portBPinStates |= pinValue;
+			write( 0x15, m_portBPinStates );
+		}
+	}
+
 private:
 	/// Configures A and B ports setting pins as inputs or outputs
 	void configure();
