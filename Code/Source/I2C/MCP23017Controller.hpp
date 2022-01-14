@@ -24,7 +24,7 @@ namespace I2C
  * 1. If pins are set as output after chip restart (power off - on)
  * the pins will be all on 0x00. To set them all of use i2cset -y 1 0x20 0x14 0xff
  * 
- * 
+ * @todo This class needs to be completed and tested.
  * 
  * @author AK aka MrAviator93
  */
@@ -59,57 +59,18 @@ public:
 	};
 
 	/// Default ctor, all pins are configured as output by default
-	explicit CMCP23017Controller( CI2CBusController& busController, std::uint8_t address = 0x20 ) noexcept( true )
-		: m_busController { busController }
-		, m_icAddress { address }
-	{
-		configure();
-	}
+	explicit CMCP23017Controller( CI2CBusController& busController, std::uint8_t address = 0x20 ) noexcept( true );
 
 	/// The secondary ctor, which enables the individual port configuration
 	explicit CMCP23017Controller( CI2CBusController& busController,
 								  std::uint8_t portAConfig,
 								  std::uint8_t portBConfig,
-								  std::uint8_t address = 0x20 ) noexcept( true )
-		: m_busController { busController }
-		, m_icAddress { address }
-		, m_portAConfiguration { portAConfig }
-		, m_portBConfiguration { portBConfig }
-	{
-		configure();
-	}
+								  std::uint8_t address = 0x20 ) noexcept( true );
 
-	void serPortConfig( Port port, std::uint8_t config )
-	{
-		if( port == Port::PORT_A )
-		{
-			if( m_portAConfiguration != config )
-			{
-				m_portAConfiguration = config;
-				configure();
-			}
-		}
-
-		if( port == Port::PORT_B )
-		{
-			if( m_portBConfiguration != config )
-			{
-				m_portBConfiguration = config;
-				configure();
-			}
-		}
-	}
+	void serPortConfig( Port port, std::uint8_t config );
 
 	// Set's pin on on port A
-	void setOnPortA( Pins pin )
-	{
-		// Check if the pin is configured to be an output
-		if( ( m_portAConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
-		{
-			m_portAPinStates &= ~static_cast< std::uint8_t >( pin );
-			m_busController.write( m_icAddress, 0x14, m_portAPinStates );
-		}
-	}
+	void setOnPortA( Pins pin );
 
 	// TBW ...
 	template < typename... Args >
@@ -127,15 +88,7 @@ public:
 	}
 
 	/// TBW
-	void setOffPortA( Pins pin )
-	{
-		// Check if pin is configured to be an output
-		if( ( m_portAConfiguration & static_cast< std::uint8_t >( pin ) ) == 0 )
-		{
-			m_portAPinStates |= static_cast< std::uint8_t >( pin );
-			m_busController.write( m_icAddress, 0x14, m_portAPinStates );
-		}
-	}
+	void setOffPortA( Pins pin );
 
 	// TBW ...
 	template < typename... Args >
@@ -154,19 +107,10 @@ public:
 
 private:
 	/// Configures A and B ports setting pins as inputs or outputs
-	void configure()
-	{
-		m_busController.write( m_icAddress, m_IODDIRARegister, m_portAConfiguration );
-		m_busController.write( m_icAddress, m_IODDIRBRegister, m_portBConfiguration );
-		retrieve();
-	}
+	void configure();
 
 	/// TBW
-	void retrieve()
-	{
-		m_busController.read( m_icAddress, 0x12, m_portAPinStates );
-		m_busController.read( m_icAddress, 0x13, m_portBPinStates );
-	}
+	void retrieve();
 
 private:
 	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C

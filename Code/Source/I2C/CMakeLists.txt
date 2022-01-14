@@ -2,9 +2,10 @@ set( EXECUTABLE_OUT_NAME main )
 
 add_executable( ${EXECUTABLE_OUT_NAME} 
     main.cpp
+    LM75Controller.cpp
     BMP180Controller.cpp
-    BMP388Controller.cpp
     I2CBusController.cpp
+    MCP23017Controller.cpp
 )
 
 if ( UNIX )

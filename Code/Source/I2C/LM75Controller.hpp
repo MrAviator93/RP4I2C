@@ -7,11 +7,8 @@ FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K.
 #ifndef I2C_LM75_CONTROLLER_HPP__
 #define I2C_LM75_CONTROLLER_HPP__
 
-// I2C
-#include "I2CBusController.hpp"
-
 // C++
-#include <array>
+#include <cstdint>
 
 namespace I2C
 {
@@ -32,38 +29,19 @@ public:
      * @param busController 
      * @param address the address of an LM75 IC on the I2C bus.
      */
-	explicit CLM75Controller( CI2CBusController& busController, std::uint8_t address = 0x48 ) noexcept( true )
-		: m_busController { busController }
-		, m_lm75Address { address }
-	{ }
+	explicit CLM75Controller( class CI2CBusController& busController, std::uint8_t address = 0x48 ) noexcept( true );
 
 	/// Retrieves the temperature in degrees Celsius
-	float getTemperatureC()
-	{
-		std::array< std::uint8_t, 2 > data { 0, 0 };
-
-		auto size = m_busController.read( m_lm75Address, m_lm75_temp_read_reg, data.data(), data.size() );
-		if( size > 0 )
-		{
-			// Calculate temperature in Celsius
-			std::int16_t itemp = ( data[ 0 ] << 8 ) | data[ 1 ];
-			float temp = itemp / 256.0f;
-			return temp;
-		}
-
-		return 0.0f;
-	}
+	float getTemperatureC();
 
 	/// Retrieves the temperature in Fahrenheit
-	float getTemperatureF()
-	{
-		return getTemperatureC() * 1.8f + 32.0f;
-	}
+	float getTemperatureF();
 
 private:
-	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
-
+	class CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
 	std::uint8_t m_lm75Address { 0x48 }; //!< Address of an LM75 IC on the I2C bus.
+
+private:
 	inline static constexpr std::uint8_t m_lm75_temp_read_reg { 0x00 }; //!< Temperature read register on LM75
 };
 
