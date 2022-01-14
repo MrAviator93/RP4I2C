@@ -1,5 +1,6 @@
 
 #include "MCP23017Controller.hpp"
+#include "I2CBusController.hpp"
 
 namespace I2C
 {
@@ -75,6 +76,11 @@ void CMCP23017Controller::retrieve()
 {
 	m_busController.read( m_icAddress, 0x12, m_portAPinStates );
 	m_busController.read( m_icAddress, 0x13, m_portBPinStates );
+}
+
+void CMCP23017Controller::write( std::uint8_t portAddress, std::uint8_t pinStates )
+{
+	m_busController.write( m_icAddress, portAddress, pinStates );
 }
 
 } // namespace I2C

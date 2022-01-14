@@ -7,9 +7,6 @@ FILE UTMOST REVIEW DONE ON (30.09.2021) BY ARTUR K.
 #ifndef I2C_MCP23017_CONTROLLER_HPP__
 #define I2C_MCP23017_CONTROLLER_HPP__
 
-// I2C
-#include "I2CBusController.hpp"
-
 // C++
 #include <iostream>
 
@@ -59,14 +56,16 @@ public:
 	};
 
 	/// Default ctor, all pins are configured as output by default
-	explicit CMCP23017Controller( CI2CBusController& busController, std::uint8_t address = 0x20 ) noexcept( true );
+	explicit CMCP23017Controller( class CI2CBusController& busController,
+								  std::uint8_t address = 0x20 ) noexcept( true );
 
 	/// The secondary ctor, which enables the individual port configuration
-	explicit CMCP23017Controller( CI2CBusController& busController,
+	explicit CMCP23017Controller( class CI2CBusController& busController,
 								  std::uint8_t portAConfig,
 								  std::uint8_t portBConfig,
 								  std::uint8_t address = 0x20 ) noexcept( true );
 
+	/// TBW
 	void serPortConfig( Port port, std::uint8_t config );
 
 	// Set's pin on on port A
@@ -83,7 +82,7 @@ public:
 		if( ( m_portAConfiguration & pinValue ) == 0 )
 		{
 			m_portAPinStates &= ~pinValue;
-			m_busController.write( m_icAddress, 0x14, m_portAPinStates );
+			write( 0x14, m_portAPinStates );
 		}
 	}
 
@@ -101,7 +100,7 @@ public:
 		if( ( m_portAConfiguration & pinValue ) == 0 )
 		{
 			m_portAPinStates |= pinValue;
-			m_busController.write( m_icAddress, 0x14, m_portAPinStates );
+			write( 0x14, m_portAPinStates );
 		}
 	}
 
@@ -112,8 +111,11 @@ private:
 	/// TBW
 	void retrieve();
 
+	/// TBW
+	void write( std::uint8_t portAddress, std::uint8_t pinStates );
+
 private:
-	CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
+	class CI2CBusController& m_busController; //!< I2C Bus Controller, allows to interface with I2C
 	std::uint8_t m_icAddress { 0x20 }; //!< Address of an MCP23017 IC on the I2C bus.
 	std::uint8_t m_portAConfiguration {}; //!< Bits identify if pins are set to output ( 0 ) or input ( 1 ) for port A
 	std::uint8_t m_portBConfiguration {}; //!< Bits identify if pins are set to output ( 0 ) or input ( 1 ) for port B
